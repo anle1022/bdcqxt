@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.ExtendedCaseDao">
+
+	
+	<select id="findExtendedCaseList" parameterType="List" resultType="ExtendedCase">
+		select orgCode,count(orgCode) as total from bdc_qh_extendedcase  
+		<where>
+			<trim prefixOverrides="and">
+				<if test="startTime != null and startTime != ''">
+					and time between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+		group by orgCode
+	</select>
+	
+	<select id="findExtend" parameterType="List" resultType="CaseProcess">
+		select * from (select rownum as no,k.ajbh,k.operator,k.operatetime,k.operateorgcode,k.processnode,k.djzh,k.extendedtime,k.slsj,k.row_flg
+  from (select c.ajbh,c.operator,c.operatetime,c.operateorgcode,c.processnode,e.djzh,e.time as extendedtime,e.starttime as slsj,row_number() over(partition by ajbh order by operatetime desc) as row_flg
+          from bdc_qh_case c inner join bdc_qh_extendedcase e on c.djzh = e.djzh
+		<trim prefix="where" prefixOverrides="and">
+			<if test="item.orgCode != null and item.orgCode != ''">
+				and orgCode=#{item.orgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="startTime != null and startTime != ''">
+					and time between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+			</if>
+		</trim>
+		order by e.djzh)k 
+			<if test="endRow != 0">
+			where	k.row_flg='1' and rownum <![CDATA[<=]]> #{endRow,jdbcType=NUMERIC}
+			</if>
+		)a where a.no <![CDATA[>]]> #{startRow,jdbcType=NUMERIC} 
+		
+	</select>
+	<select id="countFindExtend" parameterType="List" resultType="Integer">
+		select count(0) from (
+  			select  c.ajbh,c.operator,c.operatetime,c.operateorgcode,c.processnode,e.djzh,e.time as extendedtime,e.starttime as slsj,row_number() over(partition by ajbh order by operatetime desc) as row_flg from  bdc_qh_case c
+         inner join bdc_qh_extendedcase e on c.djzh = e.djzh
+         <trim prefix="where" prefixOverrides="and">
+			<if test="item.orgCode != null and item.orgCode != ''">
+				and orgCode=#{item.orgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="startTime != null and startTime != ''">
+					and time between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+			</if>
+		</trim>
+		) where	row_flg='1'
+	</select>
+	
+	<insert id="addEntityListInBatch" parameterType="ExtendedCase">
+		insert into bdc_qh_extendedcase (id,djzh,starttime,time,orgcode)
+		select sys_guid(),A.* from (
+		<foreach collection="list" item="item" index="index" separator="union all">
+			(select
+			#{item.djzh,jdbcType=VARCHAR},#{item.startTime,jdbcType=VARCHAR},#{item.time,jdbcType=VARCHAR},
+			#{item.orgCode,jdbcType=VARCHAR} from dual )
+		</foreach>
+		)A
+	</insert>
+	<delete id="deleteEntityByTime" parameterType="String">
+		delete bdc_qh_extendedCase where time = #{time,jdbcType=VARCHAR}
+	</delete>
+</mapper>

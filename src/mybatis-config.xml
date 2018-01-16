@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration 
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<settings>
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+
+	<typeAliases>
+		<typeAlias alias="Menu" type="kq.qh.entity.Menu" />
+		<typeAlias alias="User" type="kq.qh.entity.User" />
+		<typeAlias alias="Organization" type="kq.qh.entity.Organization" />
+		<typeAlias alias="SerialNumber" type="kq.qh.entity.SerialNumber" />
+		<typeAlias alias="NumberType" type="kq.qh.entity.NumberType" />
+		<typeAlias alias="SelfSystem" type="kq.qh.entity.SelfSystem" />
+		<typeAlias alias="AlotNumber" type="kq.qh.entity.AlotNumber" />
+		<typeAlias alias="CaseProcess" type="kq.qh.entity.CaseProcess" />
+		<typeAlias alias="UselessNumber" type="kq.qh.entity.UselessNumbers" />
+		<typeAlias alias="ProcessNode" type="kq.qh.entity.ProcessNode" />
+		<typeAlias alias="Dept" type="kq.qh.entity.Dept" />
+		<typeAlias alias="Dict" type="kq.qh.entity.Dict" />
+		<typeAlias alias="RegistType" type="kq.qh.entity.RegistType" />
+		<typeAlias alias="SetNumber" type="kq.qh.entity.SetNumber" />
+		<typeAlias alias="Type" type="kq.qh.entity.Type" />
+		<typeAlias alias="ValidateBdcdyh" type="kq.qh.entity.ValidateBdcdyh" />
+		<typeAlias alias="Validate" type="kq.qh.entity.Validate" />
+		<typeAlias alias="DaySummary" type="kq.qh.entity.DaySummary" />
+		<typeAlias alias="ExtendedCase" type="kq.qh.entity.ExtendedCase" />
+		<typeAlias alias="Operation" type="kq.qh.entity.Operation" />
+		<typeAlias alias="CFxx" type="kq.qh.schedule.entity.CFxx" />
+		<typeAlias alias="CQxx" type="kq.qh.schedule.entity.CQxx" />
+		<typeAlias alias="DYxx" type="kq.qh.schedule.entity.DYxx" />
+		<typeAlias alias="LCxx" type="kq.qh.schedule.entity.LCxx" />
+		<typeAlias alias="QLRxx" type="kq.qh.schedule.entity.QLRxx" />
+		<typeAlias alias="SPBxx" type="kq.qh.schedule.entity.SPBxx" />
+	</typeAliases>
+
+</configuration>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.UserDao">
+	<resultMap type="User" id="userMap">
+		<id column="userid" property="userid" />
+		<result property="username" column="username" />
+		<result property="password" column="loginpassword" />
+		<result property="loginname" column="loginname" />
+		<result property="orgCode" column="orgCode" />
+		<result property="invaliddate" column="invaliddate" />
+		<collection property="menuList" column="loginname"
+			select="kq.qh.dao.dataSource0.MenuDao.findMenuListForUser" javaType="ArrayList"
+			ofType="Menu">
+		</collection>
+	</resultMap>
+
+	<select id="login" parameterType="User" resultMap="userMap">
+		select userid,
+		loginname, username, loginpassword,orgcode, invaliddate from
+		bdc_common_user where loginname = #{loginname,jdbcType=VARCHAR} and
+		loginpassword = #{password,jdbcType=VARCHAR}
+	</select>
+	
+	
+	
+	<update id="updateEntity" parameterType="User">
+		update bdc_common_user set loginpassword = #{password,jdbcType=VARCHAR} 
+		where loginname = #{loginname,jdbcType=NUMERIC}
+	</update>
+	
+	
+</mapper>

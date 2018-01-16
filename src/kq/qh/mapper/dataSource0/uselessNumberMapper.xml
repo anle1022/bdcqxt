@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.UselessNumberDao">
+
+	<select id="findEntityByCondition" parameterType="UselessNumber"
+		resultType="UselessNumber">
+		select id,year,numberTypeId,uselessNumber from bdc_qh_uselessnumbers
+		<where>
+			<trim prefixOverrides="and">
+				<if test="year != null">
+					and year = #{year,jdbcType=VARCHAR}
+				</if>
+				<if test="numberTypeId != null and numberTypeId != ''">
+					and numberTypeId = #{numberTypeId,jdbcType=VARCHAR}
+				</if>
+				<if test="uselessNumber != null and uselessNumber != ''">
+					and uselessNumber = #{uselessNumber,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+	</select>
+
+	<insert id="addEntity" parameterType="UselessNumber">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_uselessnumbers where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_uselessnumbers (id,year,numberTypeId,uselessNumber,selfSystemId,ajbh,reason)
+		values (
+		sys_guid(),#{year,jdbcType=VARCHAR},#{numberTypeId,jdbcType=VARCHAR},#{uselessNumber,jdbcType=VARCHAR},
+		#{selfSystemId,jdbcType=VARCHAR},#{ajbh,jdbcType=VARCHAR},#{reason,jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+	<select id="addEntityInBatch" parameterType="UselessNumber">
+		insert into bdc_qh_uselessnumbers (id,year,numberTypeId,uselessNumber,selfSystemId,ajbh,reason)
+		select sys_guid(),A.* from (
+		<foreach collection="list" item="item" index="index"
+			separator="union all">
+			(select
+			#{item.year,jdbcType=NUMERIC},#{item.numberTypeId,jdbcType=VARCHAR},#{item.uselessNumber,jdbcType=VARCHAR},
+			#{item.selfSystemId,jdbcType=VARCHAR},#{item.ajbh,jdbcType=VARCHAR},#{item.reason,jdbcType=VARCHAR}
+			from dual )
+		</foreach>
+		)A
+	</select>
+</mapper>

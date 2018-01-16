@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+
+<mapper namespace="kq.qh.dao.dataSource0.TypeDao">
+<!-- 	<select id="findAll" resultType="Type"> -->
+<!-- 		select id,name from bdc_qh_Type -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="findAllOne" parameterType="Type" resultType="Type"> -->
+<!-- 		select id,name,isdistinctebySystem from bdc_qh_Type -->
+<!-- 		<trim prefix="where" prefixOverrides="and"> -->
+<!-- 			<if test="id != null and id != ''"> -->
+<!-- 				id = #{id,jdbcType=VARCHAR}  -->
+<!-- 			</if> -->
+<!-- 		</trim> -->
+<!-- 	</select> -->
+	
+	<select id="findAll" parameterType="Type" resultType="Type">
+		select id,name,isdistinctebySystem,distinctebyXzqh from bdc_qh_Type
+		<trim prefix="where" prefixOverrides="and">
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=VARCHAR} 
+			</if>
+		</trim>
+	</select>
+</mapper>

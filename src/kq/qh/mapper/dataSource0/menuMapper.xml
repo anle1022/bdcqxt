@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.MenuDao">
+	<select id="findMenuListForUser" parameterType="String" resultType="Menu">
+	select id,pid,text,url,iconCls,leaf,sortorder,resourceKey from(select ui.resourcename as
+ 	text,ui.resourcelevel,ui.resourcekey,r.rightid,ui.uiid as id,ui.parentid as pid,ui.sortorder,
+  	ui.linkurl as url,ui.imageurl as iconCls,(case when ui.linkurl is null then 0 else 1 end ) as leaf 
+  	from bdc_common_user t left join bdc_common_userright u on t.userid = u.userid left join bdc_common_right r 
+  	on u.rightid = r.rightid left join bdc_common_uiresource ui on r.uiresourceid = ui.uiid where t.loginname = #{loginname,jdbcType=VARCHAR} 
+  	and r.isvalid = 1 and uiid is not null and resourcetype = 0 )a CONNECT BY PRIOR a.id=a.pid START WITH a.resourceKey = 'BDCDJTYQHXT' order by resourcelevel,id,sortorder  
+	</select>
+	
+
+	
+	
+	
+</mapper>

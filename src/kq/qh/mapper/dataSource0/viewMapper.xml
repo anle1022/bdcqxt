@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.ViewDao">
+	<select id="findQlr" parameterType="List" resultType="QLRxx">
+		select qlr,qlrlb,qlrzjlx,qlrzjbh,szfe,zt from VIEW_QLRXXB  where ywbh =#{ywbh,jdbcType=VARCHAR}
+<!-- 		<trim prefix="where" prefixOverrides="and"> -->
+<!-- 			<if test="ywbh != null and ywbh !=''"> -->
+<!-- 				and ywbh = #{ywbh,jdbcType=VARCHAR} -->
+<!-- 			</if> -->
+<!-- 		</trim> -->
+	</select>
+	<select id="findCq" parameterType="List" resultType="CQxx">
+		select bdcdyh,djzh,tdzl,cqmj from view_cqxxb  where ywbh =#{ywbh,jdbcType=VARCHAR}
+	</select>
+	<select id="findSpb" parameterType="List" resultType="SPBxx">
+		<!-- select csryxm,csjssj,csyj,shryxm,shjssj,shyj,spryxm,spjssj,spyj from view_spb  where ywbh =#{ywbh,jdbcType=VARCHAR} -->
+		 select csryxm,csjssj,csyj,shryxm,shjssj,shyj,spryxm,spjssj,spyj from (select ywbh as ajbh,djzh, spsj as csjssj,spr as csryxm,spyj as csyj from view_spb where spxh = 1 )a1 left join
+		  (select ywbh as ajbh,djzh, spsj as shjssj,spr as shryxm,spyj as shyj from view_spb where spxh = 2 ) a2
+		 on a1.ajbh = a2.ajbh and a1.djzh = a2.djzh
+		 left join 
+		 (select ywbh as ajbh,djzh, spsj as spjssj,spr as spryxm,spyj as spyj from view_spb where spxh = 3 ) a3
+		 on  a1.ajbh = a3.ajbh and a1.djzh = a3.djzh where a1.ajbh =#{ywbh,jdbcType=VARCHAR}
+	</select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.RegistTypeDao">
+	<select id="findTypeByPid" parameterType="RegistType" resultType="RegistType">
+		 select   id, pid ,name as text,(case when pid is null then 0 else 1 end) as leaf
+			from bdc_qh_operation t CONNECT BY PRIOR t.id = t.pid
+   		START WITH t.pid is null 
+	</select>
+	
+
+	
+	
+	
+</mapper>

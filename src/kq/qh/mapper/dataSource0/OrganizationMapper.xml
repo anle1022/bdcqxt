@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.OrganizationDao">
+	<select id="findOrganizationList" resultType="Organization">
+		select value as orgCode,nameCn as orgName from bdc_common_dictdetail where groupname = 'XZQ' and active = 1
+		order by orgCode
+	</select>
+</mapper>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.SelfSystemDao">
+	<resultMap type="SelfSystem" id="SelfSystemMap">
+		<collection property="organization" column="orgCode"
+			ofType="kq.qh.dao.dataSource0.OrganizationDao.findEntityById" select="findEntityById">
+		</collection>
+	</resultMap>
+
+	<select id="findEntityById" parameterType="String" resultType="SelfSystem">
+		select id,name,password,status from bdc_qh_selfSystem where id =
+		#{id,jdbcType=VARCHAR}
+	</select>
+	<select id="findAll" resultType="SelfSystem">
+		select id,name,password,status from bdc_qh_selfsystem
+	</select>
+	<select id="validateEntity" parameterType="SelfSystem"
+		resultType="Integer">
+		select count(id) from bdc_qh_selfSystem
+		<trim prefix="where" prefixOverrides="and">
+			<if test="id !=null and id != ''">
+				and id = #{id,jdbcType=VARCHAR} 
+			</if>
+			<if test="name !=null and name != ''">
+				and name = #{name,jdbcType=VARCHAR} 
+			</if>
+			<if test="password != null and password !=''">
+				and password = #{password,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null ">
+				and status = #{status,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+	<select id="findEntityListInPage" parameterType="List"
+		resultType="SelfSystem">
+		select * from (select rownum as no, id, name,password , status
+		from bdc_qh_selfSystem 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="id != null and id !=''">
+				and  id like '%${id}%'
+			</if>
+			<if test="name !=null and name != ''">
+				and name like '%${name}%'
+			</if>
+			and rownum <![CDATA[<=]]>
+			#{endRow,jdbcType=NUMERIC}
+		</trim>
+
+
+		)a where a.no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+	</select>
+	<select id="count" parameterType="SelfSystem" resultType="Integer">
+		SELECT count(id) from bdc_qh_selfSystem
+		<where>
+			<trim prefixOverrides="and">
+				<if test="id != null and id !=''">
+					and id like '%${id}%'
+				</if>
+				<if test="name !=null and name != ''">
+					and name like '%${name}%'
+				</if>
+			</trim>
+		</where>
+	</select>
+
+	<insert id="addEntity" parameterType="SelfSystem">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_selfSystem where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_selfSystem (id,name,password,status)
+		values (
+		sys_guid(),#{name,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{status,jdbcType=NUMERIC})
+	</insert>
+	<update id="updateEntity" parameterType="SelfSystem">
+		update bdc_qh_selfSystem
+		<trim prefix="set" suffixOverrides=",">
+			<if test="name !=null and name != ''">
+				name = #{name,jdbcType=VARCHAR} ,
+			</if>
+			<if test="password !=null and password != ''">
+				password = #{password,jdbcType=VARCHAR} ,
+			</if>
+			<if test="status !=null and status != ''">
+				status = #{status,jdbcType=NUMERIC} ,
+			</if>
+			
+		</trim>
+		<where>
+			id = #{id,jdbcType=VARCHAR}
+		</where>
+	</update>
+	<delete id="deleteEntity" parameterType="String">
+		delete from
+		bdc_qh_selfSystem where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	
+	
+	
+
+</mapper>

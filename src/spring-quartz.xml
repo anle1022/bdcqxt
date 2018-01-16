@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	 <!-- 添加调度的任务bean 配置对应的class-->
+	<bean id="jobSchedule" class="kq.qh.schedule.Jobs" />
+	<!--配置调度具体执行的方法-->
+	<bean id="setSerialNumberDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="jobSchedule" />
+		<property name="targetMethod" value="setSerialNumber" />
+		<property name="concurrent" value="false" />
+	</bean>
+  	<!--配置调度执行的触发的时间-->
+	<bean id="setSerialNumberTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" >
+	    	<ref bean="setSerialNumberDetail"/>
+	    </property>
+	    <property name="cronExpression">
+	      <!-- 12月1日 1点1分1秒 -->
+	      <value>26 59 11 30 12 ?</value>
+	    </property>
+	</bean>
+	<bean id="collectDataDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="jobSchedule" />
+		<property name="targetMethod" value="collectData" />
+		<property name="concurrent" value="false" />
+	</bean>
+  	<!--配置调度执行的触发的时间-->
+	<bean id="collectDataTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" >
+	    	<ref bean="collectDataDetail"/>
+	    </property>
+	    <property name="cronExpression">
+	      <!-- 每天凌晨1点执行任务调度 -->
+	     	<value>0 0 0 1 * ?</value>
+	    </property>
+	</bean>
+	
+	 <bean id="springJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+        <property name="triggers">  
+            <list>  
+          		<ref bean="collectDataTrigger"/>	
+                <ref bean="setSerialNumberTrigger"/> 
+            </list>  
+        </property>  
+    </bean>  
+</beans>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- Use this file to deploy some handlers/chains and services      --><!-- Two ways to do this:                                           --><!--   java org.apache.axis.client.AdminClient deploy.wsdd          --><!--      after the axis server is running                          --><!-- or                                                             --><!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   --><!--      from the same directory that the Axis engine runs         --><deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from OfferNumberServiceService WSDL service -->
+
+  <service name="OfferNumberService" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://webService.qh.kq"/>
+      <parameter name="wsdlServiceElement" value="OfferNumberServiceService"/>
+      <parameter name="schemaQualified" value="http://webService.qh.kq"/>
+      <parameter name="wsdlServicePort" value="OfferNumberService"/>
+      <parameter name="className" value="kq.qh.webService.OfferNumberService"/>
+      <parameter name="wsdlPortType" value="OfferNumberService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation xmlns:operNS="http://webService.qh.kq" xmlns:retNS="http://webService.qh.kq" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="offerNumber" qname="operNS:offerNumber" returnQName="retNS:offerNumberReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://webService.qh.kq" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:str" type="tns:string"/>
+        <parameter xmlns:pns="http://webService.qh.kq" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:type" type="tns:string"/>
+      </operation>
+      <operation xmlns:operNS="http://webService.qh.kq" xmlns:retNS="http://webService.qh.kq" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="getDJZG" qname="operNS:getDJZG" returnQName="retNS:getDJZGReturn" returnType="rtns:string" soapAction="">
+      </operation>
+      <operation xmlns:operNS="http://webService.qh.kq" xmlns:retNS="http://webService.qh.kq" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="afreshOfferNumber" qname="operNS:afreshOfferNumber" returnQName="retNS:afreshOfferNumberReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://webService.qh.kq" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:str" type="tns:string"/>
+        <parameter xmlns:pns="http://webService.qh.kq" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:type" type="tns:string"/>
+      </operation>
+      <operation xmlns:operNS="http://webService.qh.kq" xmlns:retNS="http://webService.qh.kq" xmlns:rtns="http://www.w3.org/2001/XMLSchema" name="validateBDCDY" qname="operNS:validateBDCDY" returnQName="retNS:validateBDCDYReturn" returnType="rtns:string" soapAction="">
+        <parameter xmlns:pns="http://webService.qh.kq" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:str" type="tns:string"/>
+        <parameter xmlns:pns="http://webService.qh.kq" xmlns:tns="http://www.w3.org/2001/XMLSchema" qname="pns:type" type="tns:string"/>
+      </operation>
+      <parameter name="allowedMethods" value="getDJZG afreshOfferNumber offerNumber validateBDCDY"/>
+
+  </service>
+</deployment>

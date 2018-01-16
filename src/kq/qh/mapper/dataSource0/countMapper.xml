@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.CountDao">
+
+	<select id="findAll" parameterType="List" resultType="DaySummary">
+		 select sum(total) as total,processnode,orgcode,djlx2 from bdc_qh_daysummary
+		<where>
+			<if test="startTime != null and startTime != ''">
+				 time between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+			</if>
+		</where>
+		group by processnode,orgcode,djlx2 
+	</select>
+	
+	<select id="findExtendedCase" parameterType="List" resultType="ExtendedCase">
+		select orgCode,count(orgCode) as sum from bdc_qh_extendedcase  
+		<where>
+			<trim prefix="and">
+				<if test="startTime != null and startTime != ''">
+					and startTime between #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+		group by orgCode
+	</select>
+</mapper>

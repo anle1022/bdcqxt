@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://webService.qh.kq" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://webService.qh.kq" xmlns:intf="http://webService.qh.kq" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://webService.qh.kq" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="offerNumber">
+    <complexType>
+     <sequence>
+      <element name="str" type="xsd:string"/>
+      <element name="type" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="offerNumberResponse">
+    <complexType>
+     <sequence>
+      <element name="offerNumberReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getDJZG">
+    <complexType/>
+   </element>
+   <element name="getDJZGResponse">
+    <complexType>
+     <sequence>
+      <element name="getDJZGReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="afreshOfferNumber">
+    <complexType>
+     <sequence>
+      <element name="str" type="xsd:string"/>
+      <element name="type" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="afreshOfferNumberResponse">
+    <complexType>
+     <sequence>
+      <element name="afreshOfferNumberReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="validateBDCDY">
+    <complexType>
+     <sequence>
+      <element name="str" type="xsd:string"/>
+      <element name="type" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="validateBDCDYResponse">
+    <complexType>
+     <sequence>
+      <element name="validateBDCDYReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="afreshOfferNumberRequest">
+
+      <wsdl:part element="impl:afreshOfferNumber" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="offerNumberResponse">
+
+      <wsdl:part element="impl:offerNumberResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="offerNumberRequest">
+
+      <wsdl:part element="impl:offerNumber" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="validateBDCDYResponse">
+
+      <wsdl:part element="impl:validateBDCDYResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="validateBDCDYRequest">
+
+      <wsdl:part element="impl:validateBDCDY" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="afreshOfferNumberResponse">
+
+      <wsdl:part element="impl:afreshOfferNumberResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDJZGResponse">
+
+      <wsdl:part element="impl:getDJZGResponse" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDJZGRequest">
+
+      <wsdl:part element="impl:getDJZG" name="parameters">
+
+      </wsdl:part>
+
+   </wsdl:message>
+
+   <wsdl:portType name="OfferNumberService">
+
+      <wsdl:operation name="offerNumber">
+
+         <wsdl:input message="impl:offerNumberRequest" name="offerNumberRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:offerNumberResponse" name="offerNumberResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDJZG">
+
+         <wsdl:input message="impl:getDJZGRequest" name="getDJZGRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:getDJZGResponse" name="getDJZGResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="afreshOfferNumber">
+
+         <wsdl:input message="impl:afreshOfferNumberRequest" name="afreshOfferNumberRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:afreshOfferNumberResponse" name="afreshOfferNumberResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="validateBDCDY">
+
+         <wsdl:input message="impl:validateBDCDYRequest" name="validateBDCDYRequest">
+
+       </wsdl:input>
+
+         <wsdl:output message="impl:validateBDCDYResponse" name="validateBDCDYResponse">
+
+       </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="OfferNumberServiceSoapBinding" type="impl:OfferNumberService">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="offerNumber">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="offerNumberRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="offerNumberResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDJZG">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDJZGRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDJZGResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="afreshOfferNumber">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="afreshOfferNumberRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="afreshOfferNumberResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="validateBDCDY">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="validateBDCDYRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="validateBDCDYResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="OfferNumberServiceService">
+
+      <wsdl:port binding="impl:OfferNumberServiceSoapBinding" name="OfferNumberService">
+
+         <wsdlsoap:address location="http://localhost:8080/bdcqhxt/services/OfferNumberService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

@@ -1,0 +1,17 @@
+body{
+	margin: 2px 12px;
+	padding: 0;
+	font-size: 14px;
+	font-family: tahoma, arial;
+	background: #fff;
+}
+table{
+	border-collapse: collapse;
+}
+th, td{
+	padding: 4px;
+}
+
+fieldset{
+	border: 1px solid #aaa;
+}

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.DaySummaryDao">
+	<select id="findEntityListInPage" parameterType="List" resultType="DaySummary">
+		select * from (
+		select rownum as no,d.* from (select djlx1,bllx,orgCode,processNode,sum(total) as total from bdc_qh_daysummary 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="daySummary.orgCode != null and daySummary.orgCode !=''">
+					and orgCode = #{daySummary.orgCode,jdbcType=NUMERIC}
+			</if>
+			<if test="startTime != null and startTime !=''">
+					 and time between   #{startTime,jdbcType=VARCHAR}  and  #{endTime,jdbcType=VARCHAR}
+			</if>
+			
+<!-- 			where time between ('2015-11-11') and ('2016-11-11')  -->
+			group by djlx1,bllx,orgCode,processNode order by orgCode ) d  
+		</trim> 
+		<if test="endRow !=null and endRow != 0">
+			where rownum <![CDATA[<=]]> #{endRow,jdbcType=NUMERIC}
+		</if>
+		)a 
+		<if test="endRow !=null and endRow != 0">
+			where a.no <![CDATA[>]]> #{startRow,jdbcType=NUMERIC} 
+		</if>
+	</select>
+	<select id="count" parameterType="List" resultType="Integer">
+		select count(orgCode) from (select djlx1,bllx,orgCode,processNode,sum(total) as total from bdc_qh_daySummary 
+		<where>
+			<trim prefixOverrides="and">
+				<if test="daySummary.orgCode != null and daySummary.orgCode !=''">
+					and orgCode = #{daySummary.orgCode,jdbcType=NUMERIC}
+				</if>
+				<if test="startTime != null and startTime !=''">
+					 and time between   #{startTime,jdbcType=VARCHAR}  and  #{endTime,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where> group by djlx1,bllx,orgCode,processNode
+		)
+	</select>
+	<select id="countReport" parameterType="List" resultType="DaySummary">
+	
+		select 
+			orgcode,processnode,
+<!-- 			djlx2, -->
+			<if test="bllx">bllx,</if>
+			<if test="djlx1">djlx1,</if>
+<!-- 			count(id) as sum  -->
+			djlx2
+		 from (
+				select * from bdc_qh_daysummary
+	 	<trim prefix="where" prefixOverrides="and">
+	 		<if test="starTime != null and starTime !=''">
+				and time between
+				(#{starTime,jdbcType=VARCHAR})
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and (#{endTime,jdbcType=VARCHAR}||' 23:59:59')
+			</if>
+	 	</trim>
+	 	)
+	 	group by 
+			djlx2,
+			<if test="bllx">bllx,</if>
+			<if test="djlx1">djlx1,</if>
+		orgcode,processnode
+	</select>	
+	
+	<select id="countReports" parameterType="List" resultType="DaySummary">
+	
+		select 
+			processnode,
+			orgcode,
+			
+			<if test="djlxList.size() != 0">
+				djlx2,
+			</if>
+			<if test="bllx">bllx,</if>
+			<if test="djlx1">djlx1,</if>
+			sum(total) as total
+		 from (
+				select * from bdc_qh_daysummary
+	 	<trim prefix="where" prefixOverrides="and">
+	 		<if test="item.orgCode != null and item.orgCode !=''">
+				orgCode = #{item.orgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="djlxList.size() != 0">
+					and djlx2 in 
+					<foreach collection="djlxList" item="item" open="(" close=")" separator=",">
+						#{item}
+					</foreach>
+			</if>
+	 		<if test="startTime != null and startTime !=''">
+				and time between
+				(#{startTime,jdbcType=VARCHAR})
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and (#{endTime,jdbcType=VARCHAR}||' 23:59:59')
+			</if>
+	 	</trim>
+	 	)
+	 	group by 
+			orgcode,
+			<if test="djlxList.size() != 0">
+				djlx2,
+			</if>
+			<if test="bllx">bllx,</if>
+			<if test="djlx1">djlx1,</if>
+			processnode
+	</select>	
+	
+	<select id="countCaseDetial" parameterType="List" resultType="DaySummary">
+		select * from bdc_qh_daysummary
+	 	<trim prefix="where" prefixOverrides="and">
+	 		<if test="startTime != null and startTime !=''">
+				and time between
+				(#{startTime,jdbcType=VARCHAR})
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and (#{endTime,jdbcType=VARCHAR}||' 23:59:59')
+			</if>
+	 	</trim>
+	</select>	
+	
+	<delete id="deleteEntityByTime">
+		delete bdc_qh_daysummary where time = #{time,jdbcType=VARCHAR}
+	</delete>
+	<insert id="addEntityListByTime" parameterType="String">
+		
+		 insert into bdc_qh_daysummary (id,time,processnode,orgcode,djlx2,total)
+			select sys_guid(),A.* from( 
+		  select  to_char(operatetime,'yyyy-mm-dd') as time,processnode,operateorgcode, djlx2,count(djlx2) from (
+	         select  c.operatetime,c.operateorgcode,case when o.id is null then c.djlx else o.id end as djlx2,o.bdclx,c.processnode  from ( 
+		   		select ajbh,djlx,operatetime,operateorgcode,processnode,djzh,case when bdcdyh is not null then   substr(substr(bdcdyh,0,28),13,2)  end as zdtzm,
+		    	case when bdcdyh is not null then substr(substr(bdcdyh,0,28),20,1) end as dzwtzm,bdcdyh from bdc_qh_case )c
+		       	left join bdc_qh_operation o on c.djlx = o.pid and o.zdtzm like '%'||c.zdtzm||'%' and o.dzwtzm = c.dzwtzm
+		       	where to_char( operatetime,'yyyy-mm-dd') = #{time,jdbcType=VARCHAR}
+	       	)
+	        group by operatetime,operateorgcode,djlx2 ,processnode
+		
+		)A
+	</insert>
+</mapper>

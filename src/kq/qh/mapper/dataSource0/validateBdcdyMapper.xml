@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.ValidateBdcdyhDao">
+	<select id="findEntityListInPage" parameterType="List" resultType="ValidateBdcdyh">
+		select * from (select rownum as no,b.* from bdc_qh_validatebdcdyh b
+		<trim prefix="where" prefixOverrides="and">
+		<if test="item != null">
+			<if test="item.ajbh != null and item.ajbh !=''">
+				and b.ajbh like '${item.ajbh}%'
+			</if>
+			<if test="item.djzh != null and item.djzh != ''">
+				and b.djzh = #{item.djzh,jdbcType=VARCHAR}
+			</if>
+			<if test="item.bdcdyh != null and item.bdcdyh != ''">
+				and b.bdcdyh = #{item.bdcdyh,jdbcType=VARCHAR}
+			</if>
+			<if test="item.orgCode != null and item.orgCode != ''">
+				and b.bdcdyh like '${item.orgCode}%'
+			</if>
+			<if test="item.exist != null and item.exist != ''">
+				and b.exist = #{item.exist}
+			</if>
+		</if>
+			<if test="startTime != null and startTime !='' and endTime !=null and endTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+			<if test="endRow != null"> 
+				and rownum <![CDATA[<=]]> #{endRow,jdbcType=NUMERIC}
+			</if>
+		
+			
+		</trim>
+		)
+		<if test="startRow != null"> 
+		 where no <![CDATA[>]]> #{startRow,jdbcType=NUMERIC}
+		</if>
+		order by time desc
+	</select>
+
+	<select id="count" parameterType="List" resultType="Integer">
+		select count(id) from bdc_qh_validatebdcdyh
+		<trim prefix="where" prefixOverrides="and">
+		<if test="item != null">
+			<if test="item.ajbh != null and item.ajbh !=''">
+				and ajbh like '${item.ajbh}%'
+			</if>
+			<if test="item.djzh != null and item.djzh != ''">
+				and djzh like '%${item.djzh,jdbcType=VARCHAR}%'
+			</if>
+			<if test="item.bdcdyh != null and item.bdcdyh != ''">
+				and bdcdyh = #{item.bdcdyh,jdbcType=VARCHAR}
+			</if>
+			<if test="item.orgCode != null and item.orgCode != ''">
+				and bdcdyh like '${item.orgCode}%'
+			</if>
+			<if test="item.exist != null and item.exist != ''">
+				and exist = #{item.exist}
+			</if>
+			</if>
+			<if test="startTime != null and startTime !='' and endTime !=null and endTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+			<if test="endRow !=null and endRow !=''">
+				and rownum <![CDATA[<=]]> #{endRow,jdbcType=NUMERIC}
+			</if>
+			
+		</trim>
+	</select>
+
+	<select id="countNum" parameterType="List" resultType="ValidateBdcdyh">
+		select count(b.id) as sum,substr(b.bdcdyh,0,6) as orgCode,b.exist from bdc_qh_validatebdcdyh b
+		<trim prefix="where" prefixOverrides="and">
+		
+			<if test="exist != null and exist !=''">
+				and b.exist = #{exist,jdbcType=VARCHAR}
+			</if>
+			<if test="orgCode != null and orgCode != ''">
+				and b.bdcdyh  like '${orgCode}%'
+			</if>
+			<if test="startTime != null and startTime !='' and endTime !=null and endTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+		</trim>
+		group by substr(bdcdyh,0,6),exist
+	</select>
+
+<!-- 	 webService  不动产单元验证接口： -->
+	<select id="validateBDCDY" parameterType="String"
+		resultType="Integer">
+		select count(bdcdyh) from (
+			select bdcdyh from bdcgis.QJ_JYZD   union
+			select bdcdyh from bdcgis.QJ_ZHJBXX union
+			select bdcdyh from bdcgis.QJ_ZRZ union
+			select bdcdyh from bdcgis.QJ_GZW union
+			select bdcdyh from bdcgis.QJ_H union 
+			select bdcdyh from bdcgis.QJ_MZDZW union
+			select bdcdyh from bdcgis.QJ_XZDZW union
+			select bdcdyh from bdcgis.QJ_DZDZW union
+			select bdcdyh from bdcgis.QJ_ZD 
+			)
+			where bdcdyh = #{bdcdyh,jdbcType=VARCHAR}
+	</select>
+
+
+
+	<insert id="addEntityListInBatch" parameterType="ValidateBdcdyh">
+		insert into bdc_qh_validatebdcdyh (id,ajbh,djzh,bdcdyh,exist,time,systemName) 
+		select sys_guid(),A.*
+		from (
+		<foreach collection="list" item="item" index="index"
+			separator="union all">
+			(select
+			#{item.ajbh,jdbcType=VARCHAR},#{item.djzh,jdbcType=VARCHAR},#{item.bdcdyh,jdbcType=VARCHAR}
+			,#{item.exist,jdbcType=VARCHAR},to_date(#{item.time,jdbcType=VARCHAR},'yyyy-mm-dd
+			hh24:mi:ss'),#{item.systemName,jdbcType=VARCHAR} from dual )
+		</foreach>
+		) A
+	</insert>
+	
+</mapper>

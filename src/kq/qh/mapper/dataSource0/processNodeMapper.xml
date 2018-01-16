@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.ProcessNodeDao">
+
+	<select id="findEntityList" parameterType="ProcessNode"
+		resultType="ProcessNode">
+		select id,key,name,orderBy from bdc_qh_processnode order by orderBy
+	</select>
+	
+	<select id="findEntityListOrder" parameterType="List"
+		resultType="ProcessNode">
+		select id,key,name,orderBy from bdc_qh_processnode 
+		<trim prefix="where" prefixOverrides="and">
+			<if test ="key !=null and key !=''">
+				and key = #{key,jdbcType=VARCHAR}
+			</if>
+			<if test ="name !=null and name !=''">
+				and name = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test ="orderBy !=null">
+				and orderBy = #{orderBy,jdbcType=NUMERIC}
+			</if>
+		</trim>
+		order by orderBy
+	</select>
+	
+	<select id="validateEntity" parameterType="ProcessNode"
+		resultType="Integer">
+		select count(id) from bdc_qh_processnode where
+		key=#{key,jdbcType=VARCHAR} or name = #{name,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="addEntity" parameterType="ProcessNode">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_processnode where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_processnode (id,key,name,orderBy)
+		values ( sys_guid(),#{key,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{orderBy,jdbcType=NUMERIC})
+	</insert>
+
+	<update id="updateEntity" parameterType="ProcessNode">
+		update bdc_qh_processnode
+		<trim prefix="set" suffixOverrides=",">
+			<if test="key !=null and key != ''">
+				key = #{key,jdbcType=VARCHAR} ,
+			</if>
+			<if test="name !=null and name != ''">
+				name = #{name,jdbcType=VARCHAR} ,
+			</if>
+			<if test="orderBy !=null">
+				orderBy = #{orderBy,jdbcType=NUMERIC} ,
+			</if>
+		</trim>
+		<where>
+			id = #{id,jdbcType=VARCHAR}
+		</where>
+	</update>
+	
+	<delete id="deleteEntity" parameterType="String">
+		delete from
+		bdc_qh_processnode where id = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+</mapper>

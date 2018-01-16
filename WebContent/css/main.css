@@ -1,0 +1,24 @@
+
+#content{
+	margin-bottom:42px;
+	/*margin-left: 180px;*/
+	margin-right: 2px;
+	margin-bottom: 10px;
+	border-left: 1px solid #lightblue !important;
+	border-top:0px;
+	background-color:#FFF !important;
+}
+.container{background-color:#FFF}
+
+#nav_ul{
+	height: 30px;
+    margin-top: 30px !important;
+    margin-right: -20px !important;
+}
+
+#winId{
+	
+    margin-top: 40px ;
+    margin-left: 60px ;
+}
+.widget-box{margin-top:0px !important;}

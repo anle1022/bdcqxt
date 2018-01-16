@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.AlotNumberDao">
+	
+	<resultMap id="find" type="AlotNumber">
+		<id column="id" property="id" />
+		<result column="ajbh" property="ajbh" />
+		<result column="numbers" property="numbers" />
+		<result column="numberTypeId" property="numberTypeId" />
+		<result column="selfSystemId" property="selfSystemId" />
+		<result column="time" property="time" />
+		<collection property="selfSystem" ofType="Selfsystem"
+			column="selfSystemId" select="kq.qh.dao.dataSource0.SelfSystemDao.findEntityById">
+		</collection>
+		
+		<collection property="numberType" ofType="NumberType"  column="numberTypeId" select="kq.qh.dao.dataSource0.NumberTypeDao.findEntityById" >
+			<result property="type" column="type"></result>
+			<result property="text" column="text"></result>
+		</collection>
+	</resultMap>
+
+	<select id="findEntityInPage" parameterType="List" resultMap="find">
+		select * from
+			(select rownum as no
+			    ,z.id,z.ajbh,z.numbers,z.numberTypeId,z.selfSystemId,z.time,
+			    z.name,z.text,z.type,t.name as name1 from
+			    (select 
+			    b.id,b.ajbh,b.numbers,b.numberTypeId,b.selfSystemId,b.time,
+			    b.name,n.text,n.type from (
+			    ( select a.id,a.ajbh,a.numbers,a.numberTypeId,a.selfSystemId,a.time,
+			    s.name
+			    from bdc_qh_alotnumber a left join
+			    bdc_qh_selfsystem s on a.selfSystemId = s.id ) b
+			    left join bdc_qh_numbertype n on b.numbertypeid = n.id))z join bdc_qh_type t on z.type = t.id 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="item.ajbh != null and item.ajbh !=''">
+				and ajbh = #{item.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="items.name != null and items.name != ''">
+				and z.name = #{items.name,jdbcType=VARCHAR}
+			</if>
+			<if test="item.numberTypeId != null and item.numberTypeId != ''">
+				and numberTypeId like '%${item.numberTypeId}%'
+			</if>
+			<if test="items1.text != null and items1.text != ''">
+				and text like '%${items1.text}%'
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+			and rownum <![CDATA[<=]]>
+			#{endRow,jdbcType=NUMERIC}
+		</trim>
+		) where no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+		order by time desc
+	</select>
+
+	<select id="count" parameterType="List" resultType="Integer">
+		select count(0) from
+		    (select 
+		    b.id,b.ajbh,b.numbers,b.numberTypeId,b.selfSystemId,b.time,
+		    b.name,n.text,n.type from (
+		    ( select a.id,a.ajbh,a.numbers,a.numberTypeId,a.selfSystemId,a.time,
+		    s.name
+		    from bdc_qh_alotnumber a left join
+		    bdc_qh_selfsystem s on a.selfSystemId = s.id ) b
+		    left join bdc_qh_numbertype n on b.numbertypeid = n.id))z join bdc_qh_type t on z.type = t.id 
+
+		<trim prefix="where" prefixOverrides="and">
+			<if test="item.ajbh != null and item.ajbh !=''">
+				and ajbh = #{item.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="items.name != null and items.name != ''">
+				and z.name = #{items.name,jdbcType=VARCHAR}
+			</if>
+			<if test="item.numberTypeId != null and item.numberTypeId != ''">
+				and numberTypeId like '%${item.numberTypeId}%'
+			</if>
+			<if test="items1.text != null and items1.text != ''">
+				and text like '%${items1.text}%'
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+		</trim>
+	</select>
+
+	<select id="findEntityInPages" parameterType="List" resultType="AlotNumber">
+
+	select * from ( select rownum as no ,c.numberTypeId,c.num,c.numbers,c.TYPE,c.name,c.text,c.operateorgcode from ( 
+        select numbertypeid,count(0) as num ,max( numbers) as numbers,type,name,text,operateorgcode from 
+	      ( select b.id,b.ajbh,b.numbers,b.numberTypeId,b.selfSystemId,b.time,b.text,b.type,b.operateorgcode,t.name from ( 
+	       select a.id,a.ajbh,a.numbers,a.numberTypeId,a.selfSystemId,a.time,a.operateorgcode,n.text,n.type  from bdc_qh_alotnumber a 
+	              left join bdc_qh_numbertype n on a.numbertypeid = n.id ) b join bdc_qh_type t on b.type = t.id)
+		<trim prefix="where" prefixOverrides="and">
+			<if test="item.operateOrgCode != null and item.operateOrgCode !=''">
+				and operateOrgCode = #{item.operateOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="item.numberTypeId != null and item.numberTypeId != ''">
+				and numberTypeId like '%${item.numberTypeId}%'
+			</if>
+			<if test="items1.text != null and items1.text != ''">
+				and text like '%${items1.text}%'
+<!-- 				and text = #{items1.text,jdbcType=VARCHAR}  -->
+			</if>
+			<if test="items1.type != null and items1.type != ''">
+				and type = #{items1.type,jdbcType=VARCHAR}
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+				group by numbertypeid ,type,name,text,operateorgcode)c
+			where rownum <![CDATA[<=]]>
+			#{endRow,jdbcType=NUMERIC}
+		</trim>
+		) where no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+		
+	</select>
+
+
+	<select id="countfind" parameterType="List" resultType="Integer">
+		select count(0) from ( 
+			select numbertypeid,count(0) as num ,max( numbers) as numbers,type,name,text,operateorgcode from 
+		      ( select b.id,b.ajbh,b.numbers,b.numberTypeId,b.selfSystemId,b.time,b.text,b.type,b.operateorgcode,t.name from ( 
+		       select a.id,a.ajbh,a.numbers,a.numberTypeId,a.selfSystemId,a.time,a.operateorgcode,n.text,n.type  from bdc_qh_alotnumber a 
+		              left join bdc_qh_numbertype n on a.numbertypeid = n.id ) b join bdc_qh_type t on b.type = t.id)
+		<trim prefix="where" prefixOverrides="and">
+			<if test="item.operateOrgCode != null and item.operateOrgCode !=''">
+				and operateOrgCode = #{item.operateOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="item.numberTypeId != null and item.numberTypeId != ''">
+				and numberTypeId like '%${item.numberTypeId}%'
+			</if>
+			<if test="items1.text != null and items1.text != ''">
+				and text like '%${items1.text}%'
+<!-- 				and text = #{items1.text,jdbcType=VARCHAR}  -->
+			</if>
+			<if test="items1.type != null and items1.type != ''">
+				and type = #{items1.type,jdbcType=VARCHAR}
+			</if>
+			<if test="startTime != null and startTime !=''">
+				and time between
+				to_date(#{startTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd
+				hh24:mi:ss')
+			</if>
+		</trim>
+		group by numbertypeid ,type,name,text,operateorgcode)
+	</select>
+
+
+
+	<select id="findEntityByCondition" parameterType="AlotNumber"
+		resultType="AlotNumber">
+		select
+		id,ajbh,numbers,numberTypeId,selfSystemId,time
+		from bdc_qh_alotNumber
+		<where>
+
+			<trim prefixOverrides="and">
+
+				<if test="ajbh != null and ajbh !=''">
+					and ajbh = #{ajbh,jdbcType=VARCHAR}
+				</if>
+				<if test="selfSystemId != null and selfSystemId != ''">
+					and selfSystemId = #{selfSystemId,jdbcType=VARCHAR}
+				</if>
+				<if test="numberTypeId != null and numberTypeId != ''">
+					and numberTypeId = #{numberTypeId,jdbcType=VARCHAR}
+				</if>
+				<if test="bz != null and bz == 'useless'">
+					and (  bz is null or bz <![CDATA[<>]]> 'useless' )
+				</if>
+			</trim>
+		</where>
+		order by time desc
+	</select>
+
+	<insert id="addEntity" parameterType="AlotNumber">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_alotNumber where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_alotNumber
+		(
+		id,ajbh,numbers,numberTypeId,selfSystemId,time )
+		values (
+		sys_guid(),#{ajbh,jdbcType=VARCHAR},#{numbers,jdbcType=VARCHAR},#{numberTypeId,jdbcType=VARCHAR}
+		,#{selfSystemId,jdbcType=VARCHAR},to_date(#{time,jdbcType=VARCHAR},'yyyy-mm-dd
+		hh24:mi:ss') )
+	</insert>
+	<insert id="addEntityInBatch" parameterType="AlotNumber">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_alotNumber where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_alotNumber (
+		id,ajbh,numbers,numberTypeId,selfSystemId,time,operatorName,bz,caseorgCode,operateorgCode )
+		select sys_guid(),A.*
+		from (
+		<foreach collection="list" item="item" index="index"
+			separator="union all">
+			(select
+			#{item.ajbh,jdbcType=VARCHAR},#{item.numbers,jdbcType=VARCHAR},#{item.numberTypeId,jdbcType=VARCHAR}
+			,#{item.selfSystemId,jdbcType=VARCHAR},to_date(#{item.time,jdbcType=VARCHAR},'yyyy-mm-dd
+			hh24:mi:ss'),#{item.operatorName,jdbcType=VARCHAR},#{item.bz,jdbcType=VARCHAR},#{item.caseOrgCode,jdbcType=VARCHAR},#{item.operateOrgCode,jdbcType=VARCHAR}
+			from dual )
+		</foreach>
+		) A
+	</insert>
+	<delete id="deleteEntityInBatch" parameterType="String">
+		delete bdc_qh_alotNumber where numbers in
+		<foreach collection="list" item="item" separator="," open="("
+			close=")">
+			#{item,jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+
+
+	<delete id="deleteEntity" parameterType="String">
+		delete from
+		bdc_qh_alotNumber where id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="updateBZ" parameterType="List">
+		update bdc_qh_alotNumber set bz = #{bz,jdbcType=VARCHAR}
+		<trim prefix="where">
+		  	id in
+			<foreach collection="alotNumber" item="item" separator="," open="(" close=")">
+			    #{item.id}
+			</foreach>
+		</trim>
+	
+	</update>
+
+</mapper>

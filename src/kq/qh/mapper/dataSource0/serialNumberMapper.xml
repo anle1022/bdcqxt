@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.SerialNumberDao">
+	<resultMap type="SerialNumber" id="SerialNumberMap">
+		<id property="id" column="id" />
+		<result column="numberTypeId" property="numberTypeId" />
+		<result column="YEAR" property="year" />
+		<result column="MINNUMBER" property="minNumber" />
+		<result column="CURNUMBER" property="curNumber" />
+		<result column="MAXNUMBER" property="maxNumber" />
+		<collection property="numberType" column="numberTypeId"
+			ofType="NumberType" select="kq.qh.dao.dataSource0.NumberTypeDao.findEntityById">
+		</collection>
+		<collection property="selfSystem" column="selfSystemId"
+			ofType="SelfSystem" select="kq.qh.dao.dataSource0.SelfSystemDao.findEntityById">
+		</collection>
+	</resultMap>
+	<select id="findEntityById" parameterType="SerialNumber" resultType="SerialNumber">
+		select m.id,m.year,m.numberTypeId,m.minNumber,m.curNumber,m.maxNumber,m.selfSystemId,m.isRunOut,m.pk_id as pkid
+		from bdc_qh_serialNumber m 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="id != null and id != ''">
+				m.id = #{id,jdbcType=VARCHAR} 
+			</if>
+			<if test="selfSystemId != null and selfSystemId != ''">
+				and m.selfSystemId = #{selfSystemId,jdbcType=VARCHAR} 
+			</if>
+			<if test="isRunOut != null ">
+				and m.isRunOut = #{isRunOut,jdbcType=NUMERIC} 
+			</if>
+			<if test="pkid != null and pkid != ''">
+				and m.pk_id = #{pkid,jdbcType=VARCHAR} 
+			</if>
+		</trim>
+	</select>
+	<select id="findEntityByIds" parameterType="String" resultType="SerialNumber">
+		select m.id,m.year,m.numberTypeId,m.minNumber,m.curNumber,m.maxNumber
+		from bdc_qh_serialNumber m where m.numberTypeId = #{numberTypeId,jdbcType=VARCHAR}
+	</select>
+	<select id="findEntityListInPage" parameterType="List"
+		resultMap="SerialNumberMap">
+		select * from (select rownum as
+		no,m.id,m.year,m.numberTypeId,m.minNumber,m.curNumber,m.maxNumber,m.selfSystemId,m.pk_id as pkid,n.text,n.numberLength,n.rule
+	,s.name	from bdc_qh_serialNumber m
+		left join bdc_qh_numberType n on
+		m.numberTypeId = n.id left join bdc_qh_selfsystem s on m.selfsystemid =s.id
+		<trim prefix="where" prefixOverrides="and">
+			
+				<if test="year != null">
+					and m.year = #{year,jdbcType=NUMERIC}
+				</if>
+				<if test="numberTypeId !=null and numberTypeId != ''">
+					and m.numberTypeId = #{numberTypeId,jdbcType=VARCHAR}
+				</if>
+				<if test="itme.text !=null and itme.text != ''">
+					and n.text like '${itme.text}%'
+				</if>
+				<if test="itmes.name !=null and itme.name != ''">
+					and s.name like '${itmes.name}%'
+				</if>
+				<if test="endRow != null">
+					and rownum <![CDATA[<=]]>
+			#{endRow,jdbcType=NUMERIC}
+				</if>
+			</trim>
+		
+		)a where a.no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+	</select>
+	<select id="count" parameterType="List" resultType="Integer">
+		select count(id)
+  from (select rownum as no,
+               m.id,
+               m.year,
+               m.numberTypeId,
+               m.minNumber,
+               m.curNumber,
+               m.maxNumber,
+               m.selfSystemId,
+               m.pk_id as pkid,
+               n.text,
+               n.numberLength,
+               n.rule,s.name
+          from bdc_qh_serialNumber m
+          left join bdc_qh_numberType n
+            on m.numberTypeId = n.id left join bdc_qh_selfsystem s on m.selfsystemid =s.id
+		<trim prefix="where" prefixOverrides="and">
+				<if test="year != null">
+					and m.year = #{year,jdbcType=NUMERIC}
+				</if>
+				<if test="numberTypeId !=null and numberTypeId != ''">
+					and m.numberTypeId = #{numberTypeId,jdbcType=VARCHAR}
+				</if>
+				<if test="itme.text !=null and itme.text != ''">
+					and n.text like '${itme.text}%'
+				</if>
+
+			</trim>
+			)
+	</select>
+	<select id="validateEntity" parameterType="SerialNumber"
+		resultType="Integer">
+		select count(id) from bdc_qh_SerialNumber
+		<trim prefix="where" suffixOverrides="or">
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=VARCHAR} 
+			</if>
+		</trim>
+	</select>
+	<select id="validateEntityFind" parameterType="SerialNumber"
+		resultType="SerialNumber">
+		select * from bdc_qh_SerialNumber
+		<trim prefix="where" prefixOverrides="and">
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=VARCHAR} 
+			</if>
+			<if test="selfSystemId != null and selfSystemId != ''">
+				and selfSystemId = #{selfSystemId,jdbcType=VARCHAR} 
+			</if>
+		</trim>
+	</select>
+	<select id="findEntityList" parameterType="SerialNumber"
+		resultType="SerialNumber">
+		select id,year,numberTypeId,minNumber,curNumber,maxNumber,selfSystemId,isRunOut,pk_id as pkid
+		from bdc_qh_serialNumber
+		<where>
+			<trim prefixOverrides="and">
+				<if test="year != null">
+					and year = #{year,jdbcType=NUMERIC}
+				</if>
+				<if test="numberTypeId !=null and numberTypeId != ''">
+					and numberTypeId = #{numberTypeId,jdbcType=VARCHAR}
+				</if>
+				<if test="id != null and id != ''">
+					id = #{id,jdbcType=VARCHAR} 
+			</if>
+			</trim>
+		</where>
+	</select>
+
+	<insert id="addEntity" parameterType="SerialNumber">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_serialnumber where year = #{year,jdbcType=NUMERIC} and type =
+			#{type,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_serialnumber
+		(id,year,numberTypeId,minNumber,curNumber,maxNumber,selfSystemId,pk_id)
+		values
+		(#{id,jdbcType=VARCHAR},#{year,jdbcType=NUMERIC},#{numberTypeId,jdbcType=VARCHAR},#{minNumber,jdbcType=NUMERIC},#{curNumber,jdbcType=NUMERIC},#{maxNumber,jdbcType=NUMERIC},#{selfSystemId,jdbcType=VARCHAR},sys_guid())
+	</insert>
+	
+	<insert id="addEntityListInBatch" parameterType="SerialNumber">
+		insert into bdc_qh_serialnumber
+		(id,year,numberTypeId,minNumber,curNumber,maxNumber)
+		select A.* from 
+		<foreach collection="list" item="item" open="(" close=")" separator="union all">
+			( select #{item.id,jdbcType=VARCHAR},#{item.year,jdbcType=NUMERIC},#{item.numberTypeId,jdbcType=VARCHAR},#{item.minNumber,jdbcType=NUMERIC},
+			#{item.curNumber,jdbcType=NUMERIC},#{item.maxNumber,jdbcType=NUMERIC} from dual )
+		</foreach>
+		A
+	</insert>
+	
+	<update id="updateEntity" parameterType="SerialNumber">
+		update bdc_qh_serialnumber
+		<trim prefix="set" suffixOverrides=",">
+			<if test="minNumber !=null">
+				minNumber = #{minNumber,jdbcType=NUMERIC} ,
+			</if>
+			<if test="curNumber !=null ">
+				curNumber = #{curNumber,jdbcType=NUMERIC} ,
+			</if>
+			<if test="maxNumber !=null and maxNumber != ''">
+				maxNumber = #{maxNumber,jdbcType=NUMERIC} ,
+			</if>
+			<if test="numberTypeId !=null and numberTypeId != ''">
+				numberTypeId = #{numberTypeId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="isRunOut !=null and isRunOut != ''">
+				isRunOut = #{isRunOut,jdbcType=NUMERIC} ,
+			</if>
+			<if test="selfSystemId !=null and selfSystemId != ''">
+				selfSystemId = #{selfSystemId,jdbcType=VARCHAR} ,
+			</if>
+		</trim>
+		<where>
+			pk_id = #{pkid,jdbcType=VARCHAR} 
+		</where>
+	</update>
+	<delete id="deleteEntity" parameterType="String">
+		delete from
+		bdc_qh_serialnumber where pk_id = #{pkid,jdbcType=VARCHAR}
+	</delete>
+</mapper>

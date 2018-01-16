@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="off" monitorInterval="1800">  
+    <properties>  
+        <property name="LOG_HOME">C:/qhLog</property>  
+        <property name="WEBSERVICE">webService</property>  
+        <property name="SERVERS">services</property>  
+        <property name="SCHEDULESERVICE">scheduleLogger</property>  
+    </properties>  
+    
+    <appenders>  
+        <Console name="Console" target="SYSTEM_OUT" follow="true">  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />  
+        </Console>  
+        <!-- webService 日志 -->
+        <RollingFile name="webService" fileName="${LOG_HOME}/${WEBSERVICE}.log"  
+            filePattern="${LOG_HOME}/${WEBSERVICE}.%d{yyyy-MM-dd}.log">  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />  
+            <Policies>  
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />  
+            </Policies>  
+        </RollingFile>  
+        <!-- 业务日志 -->
+        <RollingFile name="scheduleService" fileName="${LOG_HOME}/${SCHEDULESERVICE}.log"  
+            filePattern="${LOG_HOME}/${SCHEDULESERVICE}.%d{yyyy-MM-dd}.log">  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />  
+            <Policies>  
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />  
+            </Policies>  
+        </RollingFile>  
+         <RollingFile name="services" fileName="${LOG_HOME}/${SERVERS}.log"  
+            filePattern="${LOG_HOME}/${SERVERS}.%d{yyyy-MM-dd}.log">  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread][%file:%line] - %msg%n" />  
+            <Policies>  
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />  
+            </Policies>  
+        </RollingFile> 
+    </appenders>  
+    <loggers> 
+    	<root level="DEBUG">  
+                <appender-ref ref="Console" level="DEBUG"/>  
+    	</root>  
+    	
+	 
+        <Logger name="servicesLogger" additivity="TRUE" level="INFO">  
+            <AppenderRef ref="services" level="INFO" />  
+        </Logger>  
+        <Logger name="webServiceLogger" additivity="TRUE" level="INFO">  
+            <AppenderRef ref="webService" level="INFO" />  
+        </Logger>  
+     	<Logger name="scheduleLogger" additivity="TRUE" level="INFO">  
+            <AppenderRef ref="scheduleService" level="INFO" />  
+        </Logger>
+        <!-- 其他第三方日志 -->
+        <logger name="org.springframework.core" level="info">  
+        </logger>  
+        <logger name="org.springframework.beans" level="info">  
+        </logger>  
+        <logger name="org.springframework.context" level="info">  
+        </logger>  
+        <logger name="org.springframework.web" level="info">  
+        </logger>  
+        <logger name="org.apache.http" level="warn">  
+        </logger>  
+       
+       
+    </loggers>
+</configuration>

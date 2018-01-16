@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.NumberTypeDao">
+	<select id="findEntityById" parameterType="String" resultType="NumberType">
+		select id,text,numberLength,rule,bind,type from bdc_qh_numberType where id =
+		#{id,jdbcType=VARCHAR}
+	</select>
+	<select id="findAll"  parameterType="NumberType" resultType="NumberType">
+		select id,text,numberLength,rule,bind,type
+		from bdc_qh_numberType 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="type !=null and type != ''">
+				type = #{type,jdbcType=VARCHAR} 
+			</if>
+			<if test="id !=null and id != ''">
+				id = #{id,jdbcType=VARCHAR} 
+			</if>
+		</trim>
+	</select>
+	<select id="findAllOne"  parameterType="NumberType" resultType="NumberType">
+		select id,text,numberLength,rule,bind,type
+		from bdc_qh_numberType 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="id !=null and id != ''">
+				id = #{id,jdbcType=VARCHAR} 
+			</if>
+		</trim>
+	</select>
+	<select id="validateEntity" parameterType="NumberType"
+		resultType="Integer">
+		select count(id) from bdc_qh_numberType
+		<trim prefix="where" suffixOverrides="or">
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=VARCHAR} or
+			</if>
+			<if test="text !=null and text != ''">
+				text = #{text,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+	<select id="findEntityListInPage" parameterType="List"
+		resultType="NumberType">
+		select * from (
+			select rownum as no,n.id,n.text,n.numberLength,n.rule,n.bind,n.type,t.name from 
+			bdc_qh_numbertype n join bdc_qh_type t on n.type = t.id
+		<where>
+			<trim prefixOverrides="and">
+				<if test="items.type != null and items.type != ''">
+					type = #{items.type,jdbcType=VARCHAR} 
+				</if>
+				<if test="items.text !=null and items.text != ''">
+					and text like '%${items.text}%' 
+				</if>
+			</trim>
+			and rownum <![CDATA[<=]]>
+			#{endRow,jdbcType=NUMERIC}
+		</where>
+		)a where a.no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+	</select>
+	<select id="count" parameterType="NumberType" resultType="Integer">
+		select count(0) from (
+			select n.id,n.text,n.numberLength,n.rule,n.bind,n.type,t.name from 
+			bdc_qh_numbertype n join bdc_qh_type t on n.type = t.id
+		<where>
+			<trim prefixOverrides="and">
+				<if test="items.type != null and items.type != ''">
+					type = #{items.type,jdbcType=VARCHAR} 
+				</if>
+				<if test="items.text !=null and items.text != ''">
+					and text like '%${items.text}%' 
+				</if>
+			</trim>
+		</where>
+		)
+	</select>
+
+	<insert id="addEntity" parameterType="NumberType">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_numberType where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_numberType (id,text,numberLength,rule,bind,type)
+		values (
+		#{id,jdbcType=VARCHAR},#{text,jdbcType=VARCHAR},#{numberLength,jdbcType=NUMERIC},#{rule,jdbcType=VARCHAR},#{bind,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR})
+	</insert>
+	<update id="updateEntity" parameterType="NumberType">
+		update bdc_qh_numberType
+		<trim prefix="set" suffixOverrides=",">
+			<if test="text !=null and text != ''">
+				text = #{text,jdbcType=VARCHAR} ,
+			</if>
+			<if test="rule !=null and rule != ''">
+				rule = #{rule,jdbcType=VARCHAR} ,
+			</if>
+			<if test="numberLength != null">
+				numberLength = #{numberLength,jdbcType=NUMERIC} ,
+			</if>
+			<if test="bind !=null and bind != ''">
+				bind = #{bind,jdbcType=VARCHAR} ,
+			</if>
+			<if test="type !=null and type != ''">
+				type = #{type,jdbcType=VARCHAR} ,
+			</if>
+		</trim>
+		<where>
+			id = #{id,jdbcType=VARCHAR}
+		</where>
+	</update>
+	<delete id="deleteEntity" parameterType="String">
+		delete from
+		bdc_qh_numberType where id = #{id,jdbcType=VARCHAR}
+	</delete>
+</mapper>

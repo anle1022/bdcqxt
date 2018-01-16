@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kq.qh.dao.dataSource0.CaseProcessDao">
+
+	<select id="findEntityList" parameterType="List"
+		resultType="CaseProcess">
+		select c.id,c.ajbh,r.oprname as djlx,n.key as processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode ,c.djzh,row_number()
+		over(partition by ajbh order by operatetime desc) as row_flg from
+		bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode 
+    inner join 
+    (select * from bdc_common_operation  ) r on c.djlx = r.oprid
+<!--     (select * from bdc_common_operation where landRegtypeCode in( select oprid from bdc_common_operation ) ) r on c.djlx = r.oprid -->
+		<trim prefix="where" prefixOverrides="and">
+			<if test="ajbh != null and ajbh != ''">
+				and c.ajbh = #{ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="operator != null and operator != ''">
+				and c.operator = #{operator,jdbcType=VARCHAR}
+			</if>
+			<if test="caseOrgCode != null and caseOrgCode != ''">
+				and c.caseOrgCode = #{caseOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="processNode != null and processNode != ''">
+				and c.processNode = #{processNode,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="starTime != null and starTime !=''">
+				and c.operatetime between
+				to_date(#{starTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			</if>
+		</trim>
+	</select>
+	<select id="findEntityListInPage" parameterType="List"
+		resultType="CaseProcess">
+		select * from (
+		select rownum as no,c.djzh,c.id,c.ajbh,r.oprname as djlx,n.key as processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode ,row_number()
+		over(partition by ajbh order by operatetime desc) as row_flg from
+		bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode 
+    inner join 
+    (select * from bdc_common_operation where landRegtypeCode in( select oprid from bdc_common_operation) ) r on c.djlx = r.oprid 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="item.ajbh != null and item.ajbh != ''">
+				and c.ajbh = #{item.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="item.operator != null and item.operator != ''">
+				and c.operator = #{item.operator,jdbcType=VARCHAR}
+			</if>
+			<if test="item.caseOrgCode != null and item.caseOrgCode != ''">
+				and c.caseOrgCode = #{item.caseOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="item.processNode != null and item.processNode != ''">
+				and c.processNode = #{item.processNode,jdbcType=VARCHAR}
+			</if>
+			<if test="item.operateTime != null and item.operateTime != ''">
+				and to_char(c.operateTime,'yyyy-mm-dd') =
+				#{item.operateTime,jdbcType=VARCHAR}
+			</if>
+			and rownum <![CDATA[<=]]>
+			#{endRow,jdbcType=NUMERIC}
+		</trim>
+		)a where a.no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+	</select>
+	<select id="count" parameterType="CaseProcess" resultType="Integer">
+		select count(c.id) from bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode 
+    inner join 
+    (select * from bdc_common_operation where landRegtypeCode in( select oprid from bdc_common_operation) ) r on c.djlx = r.oprid 
+		<trim prefix="where" prefixOverrides="and">
+			<if test="ajbh != null and ajbh != ''">
+				and c.ajbh = #{ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="operator != null and operator != ''">
+				and c.operator = #{operator,jdbcType=VARCHAR}
+			</if>
+			<if test="caseOrgCode != null and caseOrgCode != ''">
+				and c.caseOrgCode = #{caseOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="processNode != null and processNode != ''">
+				and c.processNode = #{processNode,jdbcType=VARCHAR}
+			</if>
+			<if test="operateTime != null and operateTime != ''">
+				and to_char(c.operateTime,'yyyy-mm-dd') = #{operateTime,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+	<select id="findEntityByCondition" parameterType="CaseProcess"
+		resultType="CaseProcess">
+		select
+		id,ajbh,djlx,operator,operatetime,selfsystemid,caseorgcode,operateorgcode,processnode
+		from bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode 
+    inner join 
+    (select * from bdc_common_operation where landRegtypeCode in( select oprid from bdc_common_operation) ) r on c.djlx = r.oprid 
+		<where>
+
+		</where>
+		order by time desc
+	</select>
+
+	<select id="findTheLatestData" parameterType="List" resultType="CaseProcess">
+		select * from ( 
+			select rownum as no,k.id,k.ajbh,k.djlx,k.oprid,k.processnode,k.operatetime,k.operator,k.caseOrgCode,k.operateOrgCode,k.djzh,k.row_flg from 
+			(
+		select c.id,c.ajbh,r.oprname as djlx,r.oprid ,n.key as processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode ,c.djzh,row_number()
+		over(partition by ajbh order by operatetime desc) as row_flg from
+		bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode 
+    	inner join 
+    	(select * from bdc_common_operation ) r on c.djlx = r.oprid
+
+		<trim prefix="where" prefixOverrides="and">
+
+			<if test="item.ajbh != null and item.ajbh != ''">
+				and c.ajbh = #{item.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="item.operator != null and item.operator != ''">
+				and c.operator = #{item.operator,jdbcType=VARCHAR}
+			</if>
+			<if test="item.operateOrgCode != null and item.operateOrgCode != ''">
+				and c.operateOrgCode = #{item.operateOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="item.processNode != null and item.processNode != ''">
+				and c.processNode = #{item.processNode,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="item.djlx != null and item.djlx != ''">
+					and djlx = #{item.djlx,jdbcType=VARCHAR}
+			</if>
+			<if test="item.djzh != null and item.djzh != ''">
+					and djzh = #{item.djzh,jdbcType=VARCHAR}
+			</if>
+			<if test="oprid!= null and oprid != ''">
+					and oprid = #{oprid,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="starTime != null and starTime !=''">
+				and c.operatetime between
+				to_date(#{starTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			</if>
+		</trim>
+		order by c.operatetime desc)k where row_flg = '1' and rownum <![CDATA[<=]]>
+		#{endRow,jdbcType=NUMERIC}
+		)a where a.no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+	</select>
+	<select id="countTheLatestData" parameterType="List"
+		resultType="Integer">
+		select count(0) from (    
+			select c.id,c.ajbh,r.oprname as djlx,r.oprid ,n.key as processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode ,c.djzh,row_number()  
+			  over(partition by ajbh order by operatetime desc) as row_flg from   
+			   bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode       
+			    inner join        (select * from bdc_common_operation ) r on c.djlx = r.oprid  
+		<trim prefix="where" prefixOverrides="and">
+			<if test="caseProcess.ajbh != null and caseProcess.ajbh != ''">
+				and c.ajbh = #{caseProcess.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.operator != null and caseProcess.operator != ''">
+				and c.operator = #{operator,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.operateOrgCode != null and caseProcess.operateOrgCode != ''">
+				and c.operateOrgCode = #{caseProcess.operateOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.processNode != null and caseProcess.processNode != ''">
+				and c.processNode = #{caseProcess.processNode,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.djlx != null and caseProcess.djlx != ''">
+					and djlx = #{caseProcess.djlx,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.djzh != null and caseProcess.djzh != ''">
+					and djzh = #{caseProcess.djzh,jdbcType=VARCHAR}
+			</if>
+			<if test="oprid != null and oprid != ''">
+					and oprid = #{oprid,jdbcType=VARCHAR}
+			</if>
+			<if test="starTime != null and starTime !=''">
+				and c.operatetime between
+				to_date(#{starTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			</if>
+		</trim>
+		)where row_flg = '1'
+	</select>
+	
+	<select id="findTheLatest" parameterType="List" resultType="CaseProcess">
+		select * from (select rownum as no,k.id,k.ajbh,k.djlx,k.oprid,k.processnode,k.operatetime,k.operator,k.caseOrgCode,k.operateOrgCode,k.djzh
+          from (select c.id,c.ajbh,r.name as djlx,r.id as oprid,c.processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode,c.djzh
+                  from bdc_qh_processNode n left join bdc_qh_case c on n.key = c.processnode left join bdc_qh_operation r on c.djlx = r.id
+		<trim prefix="where" prefixOverrides="and">
+
+			<if test="item.ajbh != null and item.ajbh != ''">
+				and c.ajbh = #{item.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="item.operator != null and item.operator != ''">
+				and c.operator = #{item.operator,jdbcType=VARCHAR}
+			</if>
+			<if test="item.operateOrgCode != null and item.operateOrgCode != ''">
+				and c.operateOrgCode = #{item.operateOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="item.processNode != null and item.processNode != ''">
+				and c.processNode = #{item.processNode,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="item.djlx != null and item.djlx != ''">
+					and djlx = #{item.djlx,jdbcType=VARCHAR}
+			</if>
+			<if test="item.djzh != null and item.djzh != ''">
+					and djzh = #{item.djzh,jdbcType=VARCHAR}
+			</if>
+			<if test="oprid!= null and oprid != ''">
+					and oprid = #{oprid,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="starTime != null and starTime !=''">
+				and c.operatetime between
+				to_date(#{starTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			</if>
+		</trim>
+		order by c.djzh) k
+	 	where rownum <![CDATA[<=]]> #{endRow,jdbcType=NUMERIC} )a where a.no <![CDATA[>]]>
+		#{startRow,jdbcType=NUMERIC}
+	</select>
+	<select id="countTheLatest" parameterType="List"
+		resultType="Integer">
+		select count(no) from (    
+			select rownum as no,c.id,c.ajbh,c.djlx,r.id as oprid,c.processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode,c.djzh  from 
+		bdc_qh_processNode n left join bdc_qh_case c on n.key = c.processnode  left join bdc_qh_operation r on c.djlx = r.id
+		<trim prefix="where" prefixOverrides="and">
+			<if test="caseProcess.ajbh != null and caseProcess.ajbh != ''">
+				and c.ajbh = #{caseProcess.ajbh,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.operator != null and caseProcess.operator != ''">
+				and c.operator = #{operator,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.operateOrgCode != null and caseProcess.operateOrgCode != ''">
+				and c.operateOrgCode = #{caseProcess.operateOrgCode,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.processNode != null and caseProcess.processNode != ''">
+				and c.processNode = #{caseProcess.processNode,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.djlx != null and caseProcess.djlx != ''">
+					and djlx = #{caseProcess.djlx,jdbcType=VARCHAR}
+			</if>
+			<if test="caseProcess.djzh != null and caseProcess.djzh != ''">
+					and djzh = #{caseProcess.djzh,jdbcType=VARCHAR}
+			</if>
+			<if test="oprid != null and oprid != ''">
+					and oprid = #{oprid,jdbcType=VARCHAR}
+			</if>
+			<if test="starTime != null and starTime !=''">
+				and c.operatetime between
+				to_date(#{starTime,jdbcType=VARCHAR},'yyyy-mm-dd')
+			</if>
+			<if test="endTime !=null and endTime != ''">
+				and to_date(#{endTime,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			</if>
+		</trim>
+		)
+	</select>
+	
+	
+	<insert id="addEntity" parameterType="CaseProcess">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(id) from
+			bdc_qh_case where id = #{id,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_case
+		(id,ajbh,djlx,operator,operatetime,selfsystemid,caseorgcode,operateorgcode,processnode)
+		values (
+		sys_guid(),#{ajbh,jdbcType=VARCHAR},#{djlx,jdbcType=VARCHAR},#{operator,jdbcType=VARCHAR},
+		to_date(#{operateTime,jdbcType=VARCHAR},'yyyy-mm-dd
+		hh24:mi:ss'),#{selfSystemId,jdbcType=VARCHAR},#{caseOrgCode,jdbcType=NUMERIC},
+		#{operateOrgCode,jdbcType=NUMERIC},#{processNode,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<insert id="addEntityInBatch" parameterType="CaseProcess">
+		<selectKey order="AFTER" resultType="Integer">
+			SELECT count(ajbh) from
+			bdc_qh_case where id = #{ajbh,jdbcType=VARCHAR}
+		</selectKey>
+		insert into bdc_qh_case
+		(id,ajbh,djzh,djlx,djlx1,operator,operatetime,selfsystemid,caseorgcode,operateorgcode,processnode,bdcdyh)
+		select sys_guid(),A.* from (
+		<foreach collection="list" item="item" index="index"
+			separator="union all">
+			(select
+			#{item.ajbh,jdbcType=VARCHAR},#{item.djzh,jdbcType=VARCHAR},#{item.djlx,jdbcType=VARCHAR},#{item.djlx1,jdbcType=VARCHAR},#{item.operator,jdbcType=VARCHAR},
+			to_date(#{item.operateTime,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss'),#{item.selfSystemId,jdbcType=VARCHAR},#{item.caseOrgCode,jdbcType=VARCHAR},
+			#{item.operateOrgCode,jdbcType=VARCHAR},#{item.processNode,jdbcType=VARCHAR},#{item.bdcdyh,jdbcType=VARCHAR}
+			from dual )
+		</foreach>
+		)A
+	</insert>
+	
+	<delete id="deleteCaseProcessByTime" parameterType="String" >
+		delete bdc_qh_case where  operateTime between to_date( #{time,jdbcType=VARCHAR}||' 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		and to_date( #{time,jdbcType=VARCHAR}||' 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	</delete>
+	
+	<select id="findSlCaseAndLastProcessTime" parameterType="List" resultType="CaseProcess">
+		select * from ( 
+			select c.id,c.ajbh,r.oprname as djlx,r.oprid ,n.key as processnode,c.operatetime,c.operator,c.caseOrgCode,c.operateOrgCode ,c.djzh,row_number()
+		   over(partition by c.ajbh order by n.orderby desc) as row_flg from
+		    bdc_qh_processNode n inner join bdc_qh_case c on n.key = c.processnode 
+	      	inner join (select * from bdc_common_operation ) r on c.djlx = r.oprid 
+	      	left join (select * from bdc_qh_case) bac on c.djzh = bac.djzh 
+	      	where to_char(bac.operateTime,'yyyy-mm-dd') = #{startTime,jdbcType=VARCHAR} and bac.processnode = '受理' and c.djlx = #{djlx,jdbcType=VARCHAR}  
+	       	and to_char(c.operatetime, 'yyyy-mm-dd')<![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+	    ) where ROW_FLG = 1  and exists (
+       select count(*) from bdc_qh_case c1 left join (select * from bdc_qh_case) bac1 on c1.djzh=bac1.djzh 
+        where c1.processnode='退案' and bac1.processnode = '受理' and to_char(bac1.operateTime,'yyyy-mm-dd') = #{startTime,jdbcType=VARCHAR}
+        having(count(*)=0) )
+	</select>
+
+</mapper>
